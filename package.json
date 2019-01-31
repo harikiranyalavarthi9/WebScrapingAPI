@@ -1,0 +1,33 @@
+{
+  "name": "webscrapingapi",
+  "version": "1.0.0",
+  "description": "A Node.js REST API for retrieving information using Web Scraping Technique",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/harikiranyalavarthi9/WebScrapingAPI.git"
+  },
+  "keywords": [
+    "Nodejs",
+    "Cheerio",
+    "Express"
+  ],
+  "author": "Hari Kiran Yalavarthi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/harikiranyalavarthi9/WebScrapingAPI/issues"
+  },
+  "homepage": "https://github.com/harikiranyalavarthi9/WebScrapingAPI#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.2",
+    "cheerio-tableparser": "^1.0.1",
+    "express": "^4.16.4",
+    "mongodb": "^3.1.12",
+    "request": "^2.88.0",
+    "tabletojson": "^1.0.1"
+  }
+}
