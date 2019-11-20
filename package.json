@@ -13,7 +13,8 @@
   "keywords": [
     "Nodejs",
     "Cheerio",
-    "Express"
+    "Express",
+    "MongoDB"
   ],
   "author": "Hari Kiran Yalavarthi",
   "license": "ISC",
@@ -22,11 +23,11 @@
   },
   "homepage": "https://github.com/harikiranyalavarthi9/WebScrapingAPI#readme",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "cheerio": "^1.0.0-rc.2",
     "cheerio-tableparser": "^1.0.1",
     "express": "^4.16.4",
-    "mongodb": "^3.1.12",
+    "mongodb": "^3.3.4",
     "request": "^2.88.0",
     "tabletojson": "^1.0.1"
   }
