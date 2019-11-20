@@ -2,19 +2,24 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const tabletojson = require('tabletojson');
 const MongoClient = require('mongodb').MongoClient;
+var parser = require('fast-xml-parser');
+var he = require('he');
 
-const mongoDBURL = "mongodb://localhost:27017/espndb";
+const mongoDBURL = "mongodb://localhost:27017/cricketDB";
+const baseURL = "http://www.espncricinfo.com/ci/content/player/";
+const liveURL = "http://static.cricinfo.com/rss/livescores.xml";
 
 let playerProfilesArray = [];
 let playerBattingArray = [];
 let playerBowlingArray = [];
+let liveMatchesArray = [];
 
 const search_text = "dhoni";
 
 let getPlayersData = async function() {
     for(let number=28081; number<28082; number++) {
         try {
-            let response = await axios.get('http://www.espncricinfo.com/ci/content/player/'+number+'.html');
+            let response = await axios.get(baseURL+number+'.html');
             if(response.status === 200) {
                 
                 let json = {player_id: number};
@@ -67,7 +72,7 @@ let getPlayersData = async function() {
 
                 playerProfilesArray.push(json);
 
-                const tablesAsJson = tabletojson.convert(response.data);
+                let tablesAsJson = tabletojson.convert(response.data);
                 if(typeof tablesAsJson[0] !== 'undefined') {
                     for(let j=0; j<tablesAsJson[0].length; j++) {
                         if(tablesAsJson[0][j]['0'] === 'Tests' || 'ODIs' || 'T20Is' || 'First-class' || 'List A' || 'T20s') {
@@ -82,6 +87,35 @@ let getPlayersData = async function() {
                         }
                     }
                 }
+
+                let liveResponse = await axios.get(liveURL);
+
+                var options = {
+                    attributeNamePrefix : "@_",
+                    attrNodeName: "attr",
+                    textNodeName : "#text",
+                    ignoreAttributes : true,
+                    ignoreNameSpace : false,
+                    allowBooleanAttributes : false,
+                    parseNodeValue : true,
+                    parseAttributeValue : false,
+                    trimValues: true,
+                    cdataTagName: "__cdata",
+                    cdataPositionChar: "\\c",
+                    localeRange: "",
+                    parseTrueNumberOnly: false,
+                    attrValueProcessor: a => he.decode(a, {isAttributeValue: true}),
+                    tagValueProcessor : a => he.decode(a)
+                };
+                
+                if( parser.validate(liveResponse.data) === true) {
+                    var jsonObj = parser.parse(liveResponse.data,options);
+                }
+                
+                var tObj = parser.getTraversalObj(liveResponse.data,options);
+                var jsonObj = parser.convertToJson(tObj,options);
+                
+                liveMatchesArray = jsonObj.rss.channel.item;
             }
         }   
         catch(error) {
@@ -96,70 +130,86 @@ let getPlayersData = async function() {
     }
 }
 
-getPlayersData().then(function() {
-    MongoClient.connect(mongoDBURL, { useNewUrlParser: true }, (err, client) => {
-        if(!err) {
-            const db = client.db();
-            const profilesCollection = db.collection('playerProfiles');
-            const battingCollection = db.collection('playerBattingInfo');
-            const bowlingCollection = db.collection('playerBowlingInfo');
+getPlayersData().then(async function() {     
+    const client = await MongoClient.connect(mongoDBURL, { useNewUrlParser: true,  useUnifiedTopology: true }).catch(err => { console.log(err); });
+    if(!client) {
+        return;
+    }
+    try {
+        const db = client.db();
+        const profilesCollection = db.collection('playerProfiles');
+        const battingCollection = db.collection('playerBattingInfo');
+        const bowlingCollection = db.collection('playerBowlingInfo');
+        const liveMatchesCollection = db.collection('liveMatchesInfo');
 
-            profilesCollection.insertMany(playerProfilesArray, function(err, result) {
-                if(!err) {
-                    console.log("Inserted "+result.insertedCount+" player profile.");
-                } else {
-                    console.log(err);
-                }
-            });
-
-            battingCollection.insertMany(playerBattingArray, function(err, result) {
-                if(!err) {
-                    console.log("Inserted "+result.insertedCount+" batting records.");
-                } else {
-                    console.log(err);
-                }
-            });
-
-            bowlingCollection.insertMany(playerBowlingArray, function(err, result) {
-                if(!err) {
-                    console.log("Inserted "+result.insertedCount+" bowling records.");
-                } else {
-                    console.log(err);
-                }
-            });
-
-            let getPlayer = function(callback) {
-                profilesCollection.createIndex( { full_name: "text", major_teams: "text" } );
-                profilesCollection.find({$text: { $search: search_text}}).toArray(function(err, resultArray) {
-                    if(resultArray.length != 0) {
-                        console.log("Player found for search text "+search_text);
-                        console.log(resultArray);
-                        callback(resultArray);
-                    } else {
-                        console.log("No player found for search text "+search_text);
-                    }
-                });
+        profilesCollection.insertMany(playerProfilesArray, function(err, result) {
+            if(!err) {
+                console.log("Inserted "+result.insertedCount+" player profile.");
+            } else {
+                console.log(err);
             }
+        });
 
-            getPlayer(function(resultArray) {
-                MongoClient.connect(mongoDBURL, { useNewUrlParser: true }, (err, client) => {
-                    if(!err) {
-                        const db = client.db();
-                        const batCollection = db.collection('playerBattingInfo');
-                        for(let l=0; l<resultArray.length; l++) {
-                            batCollection.find({player_id: resultArray[l].player_id}).toArray(function(err, result) {
-                                if(!err) {
-                                    console.log(result);
-                                } else {
-                                    console.log(err);
-                                }
-                            });
-                        } 
-                    }
-                    client.close();
-                });
+        battingCollection.insertMany(playerBattingArray, function(err, result) {
+            if(!err) {
+                console.log("Inserted "+result.insertedCount+" batting records.");
+            } else {
+                console.log(err);
+            }
+        });
+
+        bowlingCollection.insertMany(playerBowlingArray, function(err, result) {
+            if(!err) {
+                console.log("Inserted "+result.insertedCount+" bowling records.");
+            } else {
+                console.log(err);
+            }
+        });
+
+        liveMatchesCollection.insertMany(liveMatchesArray, function(err, result) {
+            if(!err) {
+                console.log("Inserted "+result.insertedCount+" live matches information.")
+            } else {
+                console.log(err);
+            }
+        });
+
+        let getPlayer = function(callback) {
+            profilesCollection.createIndex( { full_name: "text", major_teams: "text" } );
+            profilesCollection.find({$text: { $search: search_text}}).toArray(function(err, resultArray) {
+                if(resultArray.length != 0) {
+                    console.log("Player found for search text "+search_text);
+                    console.log(resultArray);
+                    callback(resultArray);
+                } else {
+                    console.log("No player found for search text "+search_text);
+                }
             });
         }
+
+        getPlayer(function(resultArray) {
+            MongoClient.connect(mongoDBURL, { useNewUrlParser: true,  useUnifiedTopology: true }, (err, client) => {
+                if(!err) {
+                    const db = client.db();
+                    const batCollection = db.collection('playerBattingInfo');
+                    for(let l=0; l<resultArray.length; l++) {
+                        batCollection.find({player_id: resultArray[l].player_id}).toArray(function(err, result) {
+                            if(!err) {
+                                console.log(result);
+                            } else {
+                                console.log(err);
+                            }
+                        });
+                    } 
+                }
+                client.close();
+            });
+        });
+        
+    } catch(error) {
+        console.error(error.message);
+        process.exit(1);
+    } finally {
         client.close();
-    });         
+    }        
 });

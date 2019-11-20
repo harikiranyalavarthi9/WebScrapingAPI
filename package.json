@@ -27,6 +27,8 @@
     "cheerio": "^1.0.0-rc.2",
     "cheerio-tableparser": "^1.0.1",
     "express": "^4.16.4",
+    "fast-xml-parser": "^3.14.0",
+    "he": "^1.2.0",
     "mongodb": "^3.3.4",
     "request": "^2.88.0",
     "tabletojson": "^1.0.1"
