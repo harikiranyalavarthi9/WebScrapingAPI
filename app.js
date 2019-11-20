@@ -142,44 +142,44 @@ getPlayersData().then(async function() {
         const bowlingCollection = db.collection('playerBowlingInfo');
         const liveMatchesCollection = db.collection('liveMatchesInfo');
 
-        profilesCollection.insertMany(playerProfilesArray, function(err, result) {
-            if(!err) {
-                console.log("Inserted "+result.insertedCount+" player profile.");
-            } else {
-                console.log(err);
-            }
-        });
+        // profilesCollection.insertMany(playerProfilesArray, function(err, result) {
+        //     if(!err) {
+        //         console.log("Inserted "+result.insertedCount+" player profile.");
+        //     } else {
+        //         console.log(err);
+        //     }
+        // });
 
-        battingCollection.insertMany(playerBattingArray, function(err, result) {
-            if(!err) {
-                console.log("Inserted "+result.insertedCount+" batting records.");
-            } else {
-                console.log(err);
-            }
-        });
+        // battingCollection.insertMany(playerBattingArray, function(err, result) {
+        //     if(!err) {
+        //         console.log("Inserted "+result.insertedCount+" batting records.");
+        //     } else {
+        //         console.log(err);
+        //     }
+        // });
 
-        bowlingCollection.insertMany(playerBowlingArray, function(err, result) {
-            if(!err) {
-                console.log("Inserted "+result.insertedCount+" bowling records.");
-            } else {
-                console.log(err);
-            }
-        });
+        // bowlingCollection.insertMany(playerBowlingArray, function(err, result) {
+        //     if(!err) {
+        //         console.log("Inserted "+result.insertedCount+" bowling records.");
+        //     } else {
+        //         console.log(err);
+        //     }
+        // });
 
-        liveMatchesCollection.insertMany(liveMatchesArray, function(err, result) {
-            if(!err) {
-                console.log("Inserted "+result.insertedCount+" live matches information.")
-            } else {
-                console.log(err);
-            }
-        });
+        // liveMatchesCollection.insertMany(liveMatchesArray, function(err, result) {
+        //     if(!err) {
+        //         console.log("Inserted "+result.insertedCount+" live matches information.")
+        //     } else {
+        //         console.log(err);
+        //     }
+        // });
 
         let getPlayer = function(callback) {
             profilesCollection.createIndex( { full_name: "text", major_teams: "text" } );
             profilesCollection.find({$text: { $search: search_text}}).toArray(function(err, resultArray) {
                 if(resultArray.length != 0) {
                     console.log("Player found for search text "+search_text);
-                    console.log(resultArray);
+                    console.table(resultArray);
                     callback(resultArray);
                 } else {
                     console.log("No player found for search text "+search_text);
@@ -191,11 +191,21 @@ getPlayersData().then(async function() {
             MongoClient.connect(mongoDBURL, { useNewUrlParser: true,  useUnifiedTopology: true }, (err, client) => {
                 if(!err) {
                     const db = client.db();
-                    const batCollection = db.collection('playerBattingInfo');
+                    const battingCollection = db.collection('playerBattingInfo');
+                    const bowlingCollection = db.collection('playerBowlingInfo');
                     for(let l=0; l<resultArray.length; l++) {
-                        batCollection.find({player_id: resultArray[l].player_id}).toArray(function(err, result) {
+                        battingCollection.find({player_id: resultArray[l].player_id}).toArray(function(err, result) {
                             if(!err) {
-                                console.log(result);
+                                console.log("Player with ID: "+resultArray[l].player_id+" batting statistics");
+                                console.table(result);
+                            } else {
+                                console.log(err);
+                            }
+                        });
+                        bowlingCollection.find({player_id: resultArray[l].player_id}).toArray(function(err, result) {
+                            if(!err) {
+                                console.log("Player with ID: "+resultArray[l].player_id+" bowling statistics");
+                                console.table(result);
                             } else {
                                 console.log(err);
                             }
@@ -205,7 +215,6 @@ getPlayersData().then(async function() {
                 client.close();
             });
         });
-        
     } catch(error) {
         console.error(error.message);
         process.exit(1);
