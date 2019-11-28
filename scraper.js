@@ -38,9 +38,9 @@ let getPlayersData = async function() {
                                         let testkey = key in json[tablesAsJson[k][j]['0']];
                                         if(!testkey) {
                                             if(tablesAsJson[k][j][key] === "-") {
-                                                tablesAsJson[k][j][key] = tablesAsJson[k][j][key].replace("-","0");
+                                                tablesAsJson[k][j][key] = tablesAsJson[k][j][key].replace("-",0);
                                             }
-                                            json[tablesAsJson[k][j]['0']][key] = tablesAsJson[k][j][key];
+                                            json[tablesAsJson[k][j]['0']][key] = parseInt(tablesAsJson[k][j][key]);
                                         }                             
                                     }
                                 }

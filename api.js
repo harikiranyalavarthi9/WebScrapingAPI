@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 let database, playerCollection;
 
 app.get("/players", (req, res) => {
-    playerCollection.find({}).toArray((error, result) => {
+    playerCollection.find({ODIs: { $exists: true}}).sort({"ODIs.Runs": 1}).toArray((error, result) => {
         if(error) {
             return res.status(500).send(error);
         }
