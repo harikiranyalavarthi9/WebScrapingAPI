@@ -2,23 +2,12 @@ const axios = require('axios');
 const cheerio = require('cheerio');
 const tabletojson = require('tabletojson');
 const MongoClient = require('mongodb').MongoClient;
-var parser = require('fast-xml-parser');
-var he = require('he');
 
-const mongoDBURL = "mongodb://localhost:27017/cricketDB";
+const MONGODB_URL = "mongodb://localhost:27017/cricketDB";
 const baseURL = "http://www.espncricinfo.com/ci/content/player/";
-const liveURL = "http://static.cricinfo.com/rss/livescores.xml";
-
-let playerProfilesArray = [];
-let playerBattingArray = [];
-let playerBowlingArray = [];
-let liveMatchesArray = [];
-let playersArray = [];
-
-const search_text = "dhoni";
 
 let getPlayersData = async function() {
-    for(let number=28081; number<28300; number++) {
+    for(let number=28000; number<29000; number++) {
         try {
             let response = await axios.get(baseURL+number+'.html');
             if(response.status === 200) {
@@ -60,8 +49,8 @@ let getPlayersData = async function() {
                     }
                 }
                 if(json.hasOwnProperty("Tests") && json.hasOwnProperty("ODIs") || json.hasOwnProperty("T20Is")) {
-                    console.log("Scraped "+json.full_name+" profile");
-                    const client = await MongoClient.connect(mongoDBURL, { useNewUrlParser: true,  useUnifiedTopology: true }).catch(err => { console.log(err); });
+                    console.log("Scraped "+json.full_name+"'s profile");
+                    const client = await MongoClient.connect(MONGODB_URL, { useNewUrlParser: true,  useUnifiedTopology: true }).catch(err => { console.log(err); });
                     if(!client) {
                         return;
                     }
@@ -86,14 +75,14 @@ let getPlayersData = async function() {
                         }
 
                         insertPlayer(function(isPresent) {
-                            MongoClient.connect(mongoDBURL, { useNewUrlParser: true,  useUnifiedTopology: true }, (err, client) => {
+                            MongoClient.connect(MONGODB_URL, { useNewUrlParser: true,  useUnifiedTopology: true }, (err, client) => {
                                 if(!err) {
                                     const db = client.db();
                                     const playerCollection = db.collection('players');
                                     if(!isPresent) {
                                         playerCollection.insertOne(json, function(err, result) {
                                             if(!err) {
-                                                console.log("Inserted "+json.full_name+" profile into the database.");
+                                                console.log("Inserted "+json.full_name+"'s profile into the database.");
                                             } else {
                                                 console.log(err);
                                             }
