@@ -1,6 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import { Select, Button, Table } from 'antd';
+import TableData from './TableData';
+import BarChartData from './BarChartData';
+import { Select, Button } from 'antd';
 
 const { Option } = Select;
 const typeofMatchData = ['Tests', 'ODIs', 'T20Is'];
@@ -70,7 +72,6 @@ class PlayersSelect extends React.Component {
                         }
                     ]
                 });
-                console.log(this.state.columnData);
             })
             .catch((error) => {
                 console.log(error);
@@ -79,12 +80,13 @@ class PlayersSelect extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log(this.state);
+        console.log(this.state.resultData);   
     }
 
     render() {
         return (
-            <>
+            <>  
+                <h1>Records Search</h1>
                 <div>
                     <Select
                         defaultValue={typeofMatchData[0]}
@@ -113,11 +115,18 @@ class PlayersSelect extends React.Component {
                             <Option key={statistic}>{statistic}</Option>
                         ))}
                     </Select>
-                    <Button type="primary" onClick={this.handleSubmit}>Primary</Button>
+                    <Button type="primary" onClick={this.handleSubmit}>Search</Button>
                 </div>
-                <div>
-                    <Table columns={this.state.columnData} dataSource={this.state.resultData} />
-                </div>
+                {this.state.resultData.length !== 0 ? 
+                    <div>
+                        <h1>Table Representation</h1>
+                        <TableData ColumnData={this.state.columnData} ResultData={this.state.resultData} />
+                        <br />
+                        <h1>Bar Chart Representation</h1>
+                        <BarChartData ResultData={this.state.resultData} />  
+                    </div> 
+                : null}
+
             </>
         );
     }

@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const MongoClient = require('mongodb').MongoClient;
-const ObjectId = require('mongodb').ObjectID;
 
 const MONGODB_URL = 'mongodb://localhost:27017/cricketDB';
 const DB_NAME = 'cricketDB';
