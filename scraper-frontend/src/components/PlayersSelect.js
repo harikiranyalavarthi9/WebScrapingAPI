@@ -71,6 +71,11 @@ class PlayersSelect extends React.Component {
             statisticsType: mappingObject[this.state.statisticsType]
         }
 
+        function getKeyByValue(object, value) {
+            return Object.keys(object).find(key => object[key] === value);
+        }
+          
+
         axios.get('/api/players', { params })
             .then((response) => {
                 this.setState({
@@ -78,7 +83,7 @@ class PlayersSelect extends React.Component {
                     resultData: response.data.map((result, index) => ({
                         key: index + 1,
                         name: result.full_name,
-                        [params.statisticsType.toLowerCase()]: result[params.matchType][params.statisticsType]
+                        [getKeyByValue(mappingObject, params.statisticsType)]: result[params.matchType][params.statisticsType]
                     })),
                     columnData: [
                         {
@@ -87,12 +92,13 @@ class PlayersSelect extends React.Component {
                             key: 'name'
                         },
                         {
-                            title: params.statisticsType,
-                            dataIndex: params.statisticsType.toLowerCase(),
-                            key: params.statisticsType.toLowerCase()
+                            title: getKeyByValue(mappingObject, params.statisticsType),
+                            dataIndex: getKeyByValue(mappingObject, params.statisticsType),
+                            key: getKeyByValue(mappingObject, params.statisticsType)
                         }
                     ]
                 });
+                console.log(getKeyByValue(mappingObject, params.statisticsType));
             })
             .catch((error) => {
                 console.log(error);
@@ -128,7 +134,7 @@ class PlayersSelect extends React.Component {
                         ))}
                     </Select>
                     <Select
-                        style={{ width: 120 }}
+                        style={{ width: 200 }}
                         value={this.state.statisticsType}
                         onChange={this.handleStatisticChange}
                     >
