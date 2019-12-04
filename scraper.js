@@ -7,19 +7,59 @@ const MONGODB_URL = "mongodb://localhost:27017/cricketDB";
 const baseURL = "http://www.espncricinfo.com/ci/content/player/";
 
 let getPlayersData = async function () {
-    for (let number = 28000; number < 29000; number++) {
+    for (let number = 56007; number < 56008; number++) {
         try {
             let response = await axios.get(baseURL + number + '.html');
             if (response.status === 200) {
                 let json = { player_id: number };
                 let $ = cheerio.load(response.data);
-                let info = $('.ciPlayerinformationtxt');
-                let numBasicInfo = $(info).get().length;
 
-                for (let index = 0; index < numBasicInfo; index++) {
+                json.player_name = $('.ciPlayernametxt h1').text().trim();
+                json.national_team = $('.PlayersSearchLink b').text().trim();
+
+                let info = $('.ciPlayerinformationtxt');
+                let playerInformationLength = $(info).get().length;
+
+                for (let index = 0; index < playerInformationLength; index++) {
                     let label = $(info).get(index).children[0].children[0].data.trim();
                     if (label === 'Full name') {
                         json.full_name = $(info).get(index).children[1].next.children[0].data.trim();
+                    } else if (label === 'Born') {
+                        json.date_of_birth = $(info).get(index).children[1].next.children[0].data.trim();
+                    } else if (label === 'Current age') {
+                        json.current_age = $(info).get(index).children[1].next.children[0].data.trim();
+                    } else if (label === 'Major teams') {
+                        let teamsChildren = $(info).get(index).children;
+                        let teams = [];
+                        for (let a=0; a<=teamsChildren.length; a++) {
+                            if(a%2 === 1 && a !== teamsChildren.length) {
+                                teams.push(teamsChildren[a].next.children[0].data.trim());
+                            }
+                        } 
+                        json.major_teams = teams;
+                    } else if (label === 'Nickname' || label === 'Also known as') {
+                        let nicknamesChildren = $(info).get(index).children;
+                        let nicknames = "";
+                        for (let b=0; b<=nicknamesChildren.length; b++) {
+                            if(b%2 === 1 && b !== nicknamesChildren.length) {
+                                nicknames = nicknames + nicknamesChildren[b].next.children[0].data.trim() + " ";
+                            }
+                        }
+                        json.nicknames = nicknames.trim(); 
+                    } else if (label === 'Playing role') {
+                        json.playing_role = $(info).get(index).children[1].next.children[0].data.trim();
+                    } else if (label === 'Batting style') {
+                        json.batting_style = $(info).get(index).children[1].next.children[0].data.trim();
+                    } else if (label === 'Bowling style') {
+                        json.bowling_style = $(info).get(index).children[1].next.children[0].data.trim();
+                    } else if (label === 'Height') {
+                        json.playerHeight = $(info).get(index).children[1].next.children[0].data.trim();
+                    } else if (label === 'Education') {
+                        json.education = $(info).get(index).children[1].next.children[0].data.trim();
+                    } else if (label === 'Fielding position') {
+                        json.position = $(info).get(index).children[1].next.children[0].data.trim();
+                    } else {
+                        continue;
                     }
                 }
 
@@ -34,13 +74,30 @@ let getPlayersData = async function () {
                                     json[tablesAsJson[k][j]['0']] = {};
                                 }
                                 for (let key in tablesAsJson[k][j]) {
-                                    if (key === 'Mat' || key === 'Runs' || key === 'Wkts') {
-                                        let testkey = key in json[tablesAsJson[k][j]['0']];
-                                        if (!testkey) {
+                                    let checkkey = key in json[tablesAsJson[k][j]['0']];
+                                    if (!checkkey) {
+                                        if(key !== 'Inns' && key !== 'Balls' && key !== '0' && key !== 'BF' && key !== '10' && key !== 'BBM' && key !== '4w') {  
                                             if (tablesAsJson[k][j][key] === "-") {
                                                 tablesAsJson[k][j][key] = tablesAsJson[k][j][key].replace("-", 0);
                                             }
-                                            json[tablesAsJson[k][j]['0']][key] = parseInt(tablesAsJson[k][j][key]);
+                                            if(key === 'Ave' || key === 'SR' || key === 'Econ') {
+                                                json[tablesAsJson[k][j]['0']][key] = parseFloat(tablesAsJson[k][j][key]);
+                                            } else if(key === 'Runs' || key === '100' || key === '50' || key === 'Mat' || key === '4s' || key === '6s' || key === 'NO' || key === 'Wkts' || key === '5w' || key === 'Ct' || key === 'St') {
+                                                json[tablesAsJson[k][j]['0']][key] = parseInt(tablesAsJson[k][j][key]);
+                                            } else {
+                                                json[tablesAsJson[k][j]['0']][key] = tablesAsJson[k][j][key];
+                                            }
+                                        }
+                                    } else {
+                                        if(key !== 'Mat' && key !== 'Runs') {
+                                            if (tablesAsJson[k][j][key] === "-") {
+                                                tablesAsJson[k][j][key] = tablesAsJson[k][j][key].replace("-", 0);
+                                            }
+                                            if(key === 'Ave' || key === 'SR') {
+                                                json[tablesAsJson[k][j]['0']]["Bowl_"+key] = parseFloat(tablesAsJson[k][j][key]);
+                                            } else {
+                                                json[tablesAsJson[k][j]['0']]["Bowl_"+key] = tablesAsJson[k][j][key];
+                                            }
                                         }
                                     }
                                 }
@@ -113,6 +170,6 @@ let getPlayersData = async function () {
     }
 }
 
-getPlayersData().then(async function () {
+getPlayersData().then(function () {
     console.log("Scraping and Database insertion is complete!");
 });
