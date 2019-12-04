@@ -7,7 +7,7 @@ const MONGODB_URL = "mongodb://localhost:27017/cricketDB";
 const baseURL = "http://www.espncricinfo.com/ci/content/player/";
 
 let getPlayersData = async function () {
-    for (let number = 56007; number < 56008; number++) {
+    for (let number = 56007; number < 56100; number++) {
         try {
             let response = await axios.get(baseURL + number + '.html');
             if (response.status === 200) {
@@ -82,8 +82,10 @@ let getPlayersData = async function () {
                                             }
                                             if(key === 'Ave' || key === 'SR' || key === 'Econ') {
                                                 json[tablesAsJson[k][j]['0']][key] = parseFloat(tablesAsJson[k][j][key]);
-                                            } else if(key === 'Runs' || key === '100' || key === '50' || key === 'Mat' || key === '4s' || key === '6s' || key === 'NO' || key === 'Wkts' || key === '5w' || key === 'Ct' || key === 'St') {
+                                            } else if(key === 'Runs' || key === 'Mat' || key === '4s' || key === '6s' || key === 'NO' || key === 'Wkts' || key === '5w' || key === 'Ct' || key === 'St') {
                                                 json[tablesAsJson[k][j]['0']][key] = parseInt(tablesAsJson[k][j][key]);
+                                            } else if(key === '100' || key === '50') {
+                                                json[tablesAsJson[k][j]['0']][key+"s"] = parseInt(tablesAsJson[k][j][key]);
                                             } else {
                                                 json[tablesAsJson[k][j]['0']][key] = tablesAsJson[k][j][key];
                                             }
@@ -154,6 +156,7 @@ let getPlayersData = async function () {
                         process.exit(1);
                     } finally {
                         client.close();
+                        console.log("Scraping and Database insertion is complete!");
                     }
                 }
             }
@@ -170,6 +173,4 @@ let getPlayersData = async function () {
     }
 }
 
-getPlayersData().then(function () {
-    console.log("Scraping and Database insertion is complete!");
-});
+getPlayersData();

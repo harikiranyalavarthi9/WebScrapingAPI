@@ -6,10 +6,31 @@ import { Select, Button } from 'antd';
 
 const { Option } = Select;
 const typeofMatchData = ['Tests', 'ODIs', 'T20Is'];
-const typeofPlayerData = ['Batsman', 'Bowler'];
+const typeofPlayerData = ['Batsman', 'Bowler', 'Fielder'];
 const statisticsData = {
-    Batsman: ['Runs', 'Average', 'High Score', '50s', '100s', '4s', '6s'],
-    Bowler: ['Wkts', 'Average', 'Economy', '5w']
+    Batsman: ['Most Runs', 'Highest Scores', 'Best Batting Average', 'Best Batting Strike Rate', 'Most Hundreds', 'Most Fifties', 'Most Fours', 'Most Sixes', 'Most Not Outs'],
+    Bowler: ['Most Wickets', 'Best Bowling Average', 'Best Bowling', 'Most 5 Wickets Haul', 'Best Economy', 'Best Bowling Strike Rate'],
+    Fielder: ['Catches', 'Stumpings']
+};
+
+const mappingObject = {
+    'Most Runs': 'Runs',
+    'Highest Scores': 'HS',
+    'Best Batting Average': 'Ave',
+    'Best Batting Strike Rate': 'SR',
+    'Most Hundreds': '100s',
+    'Most Fifties': '50s',
+    'Most Fours': '4s',
+    'Most Sixes': '6s',
+    'Most Not Outs': 'NO',
+    'Most Wickets': 'Wkts',
+    'Best Bowling Average': 'Bowl_Ave',
+    'Best Bowling': 'BBI',
+    'Most 5 Wickets Haul': '5w',
+    'Best Economy': 'Econ',
+    'Best Bowling Strike Rate': 'Bowl_SR',
+    'Catches': 'Ct',
+    'Stumpings': 'St'
 };
 
 class PlayersSelect extends React.Component {
@@ -47,7 +68,7 @@ class PlayersSelect extends React.Component {
 
         const params = {
             matchType: this.state.matchType,
-            statisticsType: this.state.statisticsType
+            statisticsType: mappingObject[this.state.statisticsType]
         }
 
         axios.get('/api/players', { params })
