@@ -83,14 +83,20 @@ class Records extends React.Component {
                     ...this.state,
                     resultData: response.data.map((result, index) => ({
                         key: index + 1,
-                        name: result.full_name,
+                        name: result.player_name,
+                        matches: result[params.matchType]['Mat'],
                         [getKeyByValue(mappingObject, params.statisticsType)]: result[params.matchType][params.statisticsType]
                     })),
                     columnData: [
                         {
-                            title: 'Name',
+                            title: this.state.playerType,
                             dataIndex: 'name',
                             key: 'name'
+                        },
+                        {
+                            title: 'Matches',
+                            dataIndex: 'matches',
+                            key: 'matches'
                         },
                         {
                             title: getKeyByValue(mappingObject, params.statisticsType),
