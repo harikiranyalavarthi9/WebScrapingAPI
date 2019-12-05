@@ -1,7 +1,7 @@
 import React from 'react';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, CartesianGrid } from 'recharts';
 
-class BarChartData extends React.Component {
+class BarChartRepresentation extends React.Component {
     render() {
         let statisticString;
         if(this.props.ResultData[0] !==  undefined) {
@@ -24,4 +24,4 @@ class BarChartData extends React.Component {
     }
 }
 
-export default BarChartData;
+export default BarChartRepresentation;

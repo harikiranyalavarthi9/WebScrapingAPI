@@ -22,7 +22,7 @@ app.get("/api/players", (req, res) => {
     let combinedQuery = matchType + "." + statisticsType;
     sortObject[combinedQuery] = -1;
 
-    playerCollection.find(convertedObject).limit(5).sort(sortObject).toArray((error, result) => {
+    playerCollection.find(convertedObject).limit(10).sort(sortObject).toArray((error, result) => {
         if (error) {
             return res.status(500).send(error);
         }

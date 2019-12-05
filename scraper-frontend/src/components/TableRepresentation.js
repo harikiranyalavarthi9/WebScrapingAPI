@@ -1,6 +1,6 @@
 import React from 'react';
 import { Table } from 'antd';
-class TableData extends React.Component {
+class TableRepresentation extends React.Component {
     render() {
         return (
             <div>
@@ -10,4 +10,4 @@ class TableData extends React.Component {
     }
 }
 
-export default TableData;
+export default TableRepresentation;

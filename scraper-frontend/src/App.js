@@ -1,11 +1,10 @@
 import React from 'react';
-import PlayersSelect from './components/PlayersSelect';
 import './App.css';
 
 function App() {
   return (
     <div className="App">
-      <PlayersSelect />
+      <h1>Home Page</h1>
     </div>
   );
 }
