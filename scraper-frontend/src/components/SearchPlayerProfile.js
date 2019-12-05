@@ -1,7 +1,13 @@
-import React from 'react'
+import React from 'react';
+import '../App.css';
 class SearchPlayerProfile extends React.Component {
   render() {
-    return <h1>Search</h1>
+    return (
+      <div className="App">
+        <h1>Player Search</h1>
+      </div>
+      
+    );
   }
 }
 export default SearchPlayerProfile;
