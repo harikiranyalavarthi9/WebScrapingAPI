@@ -76,7 +76,6 @@ class Records extends React.Component {
             return Object.keys(object).find(key => object[key] === value);
         }
           
-
         axios.get('/api/players', { params })
             .then((response) => {
                 this.setState({
