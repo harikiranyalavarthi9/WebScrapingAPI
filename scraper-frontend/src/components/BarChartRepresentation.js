@@ -5,7 +5,7 @@ class BarChartRepresentation extends React.Component {
     render() {
         let statisticString;
         if(this.props.ResultData[0] !==  undefined) {
-            statisticString = Object.keys(this.props.ResultData[0])[2];
+            statisticString = Object.keys(this.props.ResultData[0])[3];
         }
         return (
             <div>
