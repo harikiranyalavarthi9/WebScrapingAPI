@@ -1,0 +1,24 @@
+{
+  "files": {
+    "main.css": "/WebScrapingAPI/static/css/main.35a4dc72.chunk.css",
+    "main.js": "/WebScrapingAPI/static/js/main.7eb486a6.chunk.js",
+    "main.js.map": "/WebScrapingAPI/static/js/main.7eb486a6.chunk.js.map",
+    "runtime-main.js": "/WebScrapingAPI/static/js/runtime-main.a9b16831.js",
+    "runtime-main.js.map": "/WebScrapingAPI/static/js/runtime-main.a9b16831.js.map",
+    "static/css/2.7f669fb7.chunk.css": "/WebScrapingAPI/static/css/2.7f669fb7.chunk.css",
+    "static/js/2.01cdb608.chunk.js": "/WebScrapingAPI/static/js/2.01cdb608.chunk.js",
+    "static/js/2.01cdb608.chunk.js.map": "/WebScrapingAPI/static/js/2.01cdb608.chunk.js.map",
+    "index.html": "/WebScrapingAPI/index.html",
+    "precache-manifest.3c6c523d0e6515761a769905025919ea.js": "/WebScrapingAPI/precache-manifest.3c6c523d0e6515761a769905025919ea.js",
+    "service-worker.js": "/WebScrapingAPI/service-worker.js",
+    "static/css/2.7f669fb7.chunk.css.map": "/WebScrapingAPI/static/css/2.7f669fb7.chunk.css.map",
+    "static/css/main.35a4dc72.chunk.css.map": "/WebScrapingAPI/static/css/main.35a4dc72.chunk.css.map"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a9b16831.js",
+    "static/css/2.7f669fb7.chunk.css",
+    "static/js/2.01cdb608.chunk.js",
+    "static/css/main.35a4dc72.chunk.css",
+    "static/js/main.7eb486a6.chunk.js"
+  ]
+}
