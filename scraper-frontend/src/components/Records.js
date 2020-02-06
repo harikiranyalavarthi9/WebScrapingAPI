@@ -78,9 +78,46 @@ class Records extends React.Component {
           
         axios.get('/api/players', { params })
             .then((response) => {
+                let newResponseData = response.data;
+                if(params.statisticsType === 'HS') {
+                    var sort = function (prop, arr) {
+                        prop = prop.split('.');
+                        var len = prop.length;
+                        
+                        arr.sort(function (a, b) {
+                            var i = 0;
+                            while( i < len ) {
+                                a = a[prop[i]];
+                                b = b[prop[i]];
+                                i++;
+                            }
+                            if (a > b) {
+                                return -1;
+                            } else if (a < b) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        });
+                        return arr;
+                    };
+                    
+                    let starObject = {};
+                    
+                    for(let i=0; i<newResponseData.length; i++) {
+                        starObject[newResponseData[i].player_id] = newResponseData[i][params.matchType][params.statisticsType].includes("*", newResponseData[i][params.matchType][params.statisticsType].length-1);
+                        newResponseData[i][params.matchType][params.statisticsType] = parseInt(newResponseData[i][params.matchType][params.statisticsType].replace("*", ""));
+                    } 
+                    sort(`${params.matchType}.${params.statisticsType}`, newResponseData);
+                    for(let j=0; j<newResponseData.length; j++) {
+                        if(starObject[newResponseData[j].player_id]) {
+                            newResponseData[j][params.matchType][params.statisticsType] = newResponseData[j][params.matchType][params.statisticsType]+"*";
+                        } 
+                    }
+                }
                 this.setState({
                     ...this.state,
-                    resultData: response.data.map((result, index) => ({
+                    resultData: newResponseData.map((result, index) => ({
                         key: index + 1,
                         name: result.player_name,
                         matches: result[params.matchType]['Mat'],

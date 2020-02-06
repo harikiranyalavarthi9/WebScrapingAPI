@@ -6,13 +6,13 @@ class Header extends React.Component {
             <div>
                 <ul>
                     <li>
-                        <NavLink exact activeClassName="active" to="/">Website Home</NavLink>
+                        <NavLink exact activeClassName="active" to="/WebScrapingAPI/">Website Home</NavLink>
                     </li>
                     <li>
-                        <NavLink exact activeClassName="active" to="/records">Player Records</NavLink>
+                        <NavLink exact activeClassName="active" to="/WebScrapingAPI/records">Player Records</NavLink>
                     </li>
                     <li>
-                        <NavLink exact activeClassName="active" to="/search">Players Search</NavLink>
+                        <NavLink exact activeClassName="active" to="/WebScrapingAPI/search">Players Search</NavLink>
                     </li>
                 </ul>
             </div>
