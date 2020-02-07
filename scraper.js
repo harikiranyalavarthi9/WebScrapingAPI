@@ -11,7 +11,10 @@ let getPlayersData = async function () {
         try {
             let response = await axios.get(baseURL + number + '.html');
             if (response.status === 200) {
-                let json = { player_id: number };
+                let json = { 
+                    player_id: number,
+                    espncricinfo_url: baseURL + number + '.html'
+                };
                 let $ = cheerio.load(response.data);
 
                 json.player_name = $('.ciPlayernametxt h1').text().trim();

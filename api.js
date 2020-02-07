@@ -17,11 +17,19 @@ app.get("/api/players", (req, res) => {
     let matchType = req.query.matchType;
     let statisticsType = req.query.statisticsType;
 
-    let descendingQuery = matchType + "." + statisticsType;
+    let query = matchType + "." + statisticsType;
     let matchQuery = matchType + ".Mat";
 
-    const sortObject = {
-        [descendingQuery] : -1
+    let sortObject;
+    
+    if(statisticsType == 'Econ' || statisticsType == 'Bowl_Ave') {
+        sortObject = {
+            [query] : 1
+        }
+    } else {
+        sortObject = {
+            [query] : -1
+        }
     }
 
     const existObject = {
@@ -49,7 +57,6 @@ app.get("/api/players/:id", (req, res) => {
         if (err) {
             return res.status(500).send(error);
         }
-        console.log(result);
         res.send(result);
     });
 });

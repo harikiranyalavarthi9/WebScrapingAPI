@@ -78,7 +78,7 @@ class Records extends React.Component {
           
         axios.get('/api/players', { params })
             .then((response) => {
-                let newResponseData = response.data;
+                let newResponseData = response.data.filter(result => result[params.matchType][params.statisticsType] !== 0 && result[params.matchType][params.statisticsType] !== "0");
                 if(params.statisticsType === 'HS') {
                     var sort = function (prop, arr) {
                         prop = prop.split('.');
@@ -119,7 +119,7 @@ class Records extends React.Component {
                     ...this.state,
                     resultData: newResponseData.map((result, index) => ({
                         key: index + 1,
-                        name: result.player_name,
+                        name: <a href={result.espncricinfo_url} target={"_blank"}>{result.player_name}</a>,
                         matches: result[params.matchType]['Mat'],
                         [getKeyByValue(mappingObject, params.statisticsType)]: result[params.matchType][params.statisticsType]
                     })),
@@ -141,7 +141,7 @@ class Records extends React.Component {
                         }
                     ]
                 });
-                console.log(getKeyByValue(mappingObject, params.statisticsType));
+                // console.log(getKeyByValue(mappingObject, params.statisticsType));
             })
             .catch((error) => {
                 console.log(error);
@@ -150,7 +150,7 @@ class Records extends React.Component {
     }
 
     componentDidUpdate() {
-        console.log(this.state.resultData);   
+        // console.log(this.state.resultData);   
     }
 
     render() {
