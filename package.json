@@ -23,16 +23,22 @@
   },
   "homepage": "https://github.com/harikiranyalavarthi9/WebScrapingAPI#readme",
   "dependencies": {
+    "acorn": "^7.1.1",
     "axios": "^0.18.1",
     "body-parser": "^1.19.0",
     "cheerio": "^1.0.0-rc.3",
     "cheerio-tableparser": "^1.0.1",
     "express": "^4.17.1",
-    "fast-xml-parser": "^3.15.0",
+    "fast-xml-parser": "^3.16.0",
     "he": "^1.2.0",
-    "mongodb": "^3.3.5",
-    "nodemon": "^2.0.1",
-    "request": "^2.88.0",
-    "tabletojson": "^1.0.4"
+    "kind-of": "^6.0.3",
+    "minimist": ">=1.2.3",
+    "mongodb": "^3.5.6",
+    "nodemon": "^2.0.3",
+    "request": "^2.88.2",
+    "tabletojson": "^1.2.0"
+  },
+  "devDependencies": {
+    "serialize-javascript": "^3.0.0"
   }
 }
