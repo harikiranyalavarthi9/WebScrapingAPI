@@ -25,12 +25,13 @@ let getPlayersData = async function () {
 
                 for (let index = 0; index < playerInformationLength; index++) {
                     let label = $(info).get(index).children[0].children[0].data.trim();
+                    let labelValue = $(info).get(index).children[1].next.children[0].data.trim();
                     if (label === 'Full name') {
-                        json.full_name = $(info).get(index).children[1].next.children[0].data.trim();
+                        json.full_name = labelValue
                     } else if (label === 'Born') {
-                        json.date_of_birth = $(info).get(index).children[1].next.children[0].data.trim();
+                        json.date_of_birth = labelValue
                     } else if (label === 'Current age') {
-                        json.current_age = $(info).get(index).children[1].next.children[0].data.trim();
+                        json.current_age = labelValue
                     } else if (label === 'Major teams') {
                         let teamsChildren = $(info).get(index).children;
                         let teams = [];
@@ -50,17 +51,17 @@ let getPlayersData = async function () {
                         }
                         json.nicknames = nicknames.trim(); 
                     } else if (label === 'Playing role') {
-                        json.playing_role = $(info).get(index).children[1].next.children[0].data.trim();
+                        json.playing_role = labelValue
                     } else if (label === 'Batting style') {
-                        json.batting_style = $(info).get(index).children[1].next.children[0].data.trim();
+                        json.batting_style = labelValue
                     } else if (label === 'Bowling style') {
-                        json.bowling_style = $(info).get(index).children[1].next.children[0].data.trim();
+                        json.bowling_style = labelValue
                     } else if (label === 'Height') {
-                        json.playerHeight = $(info).get(index).children[1].next.children[0].data.trim();
+                        json.playerHeight = labelValue
                     } else if (label === 'Education') {
-                        json.education = $(info).get(index).children[1].next.children[0].data.trim();
+                        json.education = labelValue
                     } else if (label === 'Fielding position') {
-                        json.position = $(info).get(index).children[1].next.children[0].data.trim();
+                        json.position = labelValue
                     } else {
                         continue;
                     }
@@ -116,51 +117,51 @@ let getPlayersData = async function () {
                     if (!client) {
                         return;
                     }
-                    // try {
-                    //     const db = client.db();
-                    //     const playerCollection = db.collection('players');
-                    //     let isPresent = true;
-                    //     let insertPlayer = function (callback) {
-                    //         playerCollection.find({ player_id: json.player_id }).toArray(function (err, result) {
-                    //             if (!err) {
-                    //                 if (result.length > 0) {
-                    //                     console.log("Player with name: " + json.full_name + " already exists in the database");
-                    //                 } else {
-                    //                     isPresent = false;
-                    //                     callback(isPresent);
-                    //                 }
-                    //             }
-                    //             else {
-                    //                 console.log(err);
-                    //             }
-                    //         });
-                    //     }
+                    try {
+                        const db = client.db();
+                        const playerCollection = db.collection('players');
+                        let isPresent = true;
+                        let insertPlayer = function (callback) {
+                            playerCollection.find({ player_id: json.player_id }).toArray(function (err, result) {
+                                if (!err) {
+                                    if (result.length > 0) {
+                                        console.log("Player with name: " + json.full_name + " already exists in the database");
+                                    } else {
+                                        isPresent = false;
+                                        callback(isPresent);
+                                    }
+                                }
+                                else {
+                                    console.log(err);
+                                }
+                            });
+                        }
 
-                    //     insertPlayer(function (isPresent) {
-                    //         MongoClient.connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-                    //             if (!err) {
-                    //                 const db = client.db();
-                    //                 const playerCollection = db.collection('players');
-                    //                 if (!isPresent) {
-                    //                     playerCollection.insertOne(json, function (err, result) {
-                    //                         if (!err) {
-                    //                             console.log("Inserted " + json.full_name + "'s profile into the database.");
-                    //                         } else {
-                    //                             console.log(err);
-                    //                         }
-                    //                     });
-                    //                 }
-                    //             }
-                    //             client.close();
-                    //         });
-                    //     });
-                    // } catch (error) {
-                    //     console.error(error.message);
-                    //     process.exit(1);
-                    // } finally {
-                    //     client.close();
-                    //     console.log("Scraping and Database insertion is complete!");
-                    // }
+                        insertPlayer(function (isPresent) {
+                            MongoClient.connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+                                if (!err) {
+                                    const db = client.db();
+                                    const playerCollection = db.collection('players');
+                                    if (!isPresent) {
+                                        playerCollection.insertOne(json, function (err, result) {
+                                            if (!err) {
+                                                console.log("Inserted " + json.full_name + "'s profile into the database.");
+                                            } else {
+                                                console.log(err);
+                                            }
+                                        });
+                                    }
+                                }
+                                client.close();
+                            });
+                        });
+                    } catch (error) {
+                        console.error(error.message);
+                        process.exit(1);
+                    } finally {
+                        client.close();
+                        console.log("Scraping and Database insertion is complete!");
+                    }
                 }
             }
         }
