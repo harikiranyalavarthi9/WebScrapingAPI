@@ -14,42 +14,52 @@ let database, playerCollection;
 
 app.get("/api/players", (req, res) => {
 
-    let matchType = req.query.matchType;
-    let statisticsType = req.query.statisticsType;
+    if(req.query.searchQuery) {
+        playerCollection.createIndex({"player_name": "text"});
+        playerCollection.find({$text: {$search: req.query.searchQuery}}).toArray((error, result) => {
+            if (error) {
+                return res.status(500).send(error);
+            }
+            res.send(result);
+        });
+    } else if(req.query.matchType && req.query.statisticsType) {
+        let matchType = req.query.matchType;
+        let statisticsType = req.query.statisticsType;
 
-    let query = matchType + "." + statisticsType;
-    let matchQuery = matchType + ".Mat";
+        let query = matchType + "." + statisticsType;
+        let matchQuery = matchType + ".Mat";
 
-    let sortObject;
-    
-    if(statisticsType == 'Econ' || statisticsType == 'Bowl_Ave') {
-        sortObject = {
-            [query] : 1
+        let sortObject;
+        
+        if(statisticsType == 'Econ' || statisticsType == 'Bowl_Ave') {
+            sortObject = {
+                [query] : 1
+            }
+        } else {
+            sortObject = {
+                [query] : -1
+            }
         }
-    } else {
-        sortObject = {
-            [query] : -1
-        }
-    }
 
-    const existObject = {
-        [matchType]: { $exists: true }
-      }
-      
-    const matchObject = {
-        [matchQuery]: { $gte: 10 }
-    }
-      
-    const andConditionObject = {
-        '$and': [existObject, matchObject]
-    }
-
-    playerCollection.find(andConditionObject).limit(10).sort(sortObject).toArray((error, result) => {
-        if (error) {
-            return res.status(500).send(error);
+        const existObject = {
+            [matchType]: { $exists: true }
         }
-        res.send(result);
-    });
+        
+        const matchObject = {
+            [matchQuery]: { $gte: 10 }
+        }
+        
+        const andConditionObject = {
+            '$and': [existObject, matchObject]
+        }
+
+        playerCollection.find(andConditionObject).limit(10).sort(sortObject).toArray((error, result) => {
+            if (error) {
+                return res.status(500).send(error);
+            }
+            res.send(result);
+        });
+    }
 });
 
 app.get("/api/players/:id", (req, res) => {

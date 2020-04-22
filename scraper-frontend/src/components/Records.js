@@ -146,7 +146,6 @@ class Records extends React.Component {
             .catch((error) => {
                 console.log(error);
             });
-
     }
 
     componentDidUpdate() {
@@ -164,7 +163,7 @@ class Records extends React.Component {
                         onChange={this.handleMatchChange}
                     >
                         {typeofMatchData.map(match => (
-                            <Select.Option key={match}>{match}</Select.Option>
+                            <Option key={match}>{match}</Option>
                         ))}
                     </Select>
                     <Select

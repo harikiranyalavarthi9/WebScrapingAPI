@@ -3,7 +3,7 @@ module.exports = function (app) {
     app.use(
         '/api',
         proxy({
-            target: 'https://5041b1f1.ngrok.io',
+            target: 'http://808bcc8d.ngrok.io',
             changeOrigin: true,
         })
     );

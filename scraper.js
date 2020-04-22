@@ -116,51 +116,51 @@ let getPlayersData = async function () {
                     if (!client) {
                         return;
                     }
-                    try {
-                        const db = client.db();
-                        const playerCollection = db.collection('players');
-                        let isPresent = true;
-                        let insertPlayer = function (callback) {
-                            playerCollection.find({ player_id: json.player_id }).toArray(function (err, result) {
-                                if (!err) {
-                                    if (result.length > 0) {
-                                        console.log("Player with name: " + json.full_name + " already exists in the database");
-                                    } else {
-                                        isPresent = false;
-                                        callback(isPresent);
-                                    }
-                                }
-                                else {
-                                    console.log(err);
-                                }
-                            });
-                        }
+                    // try {
+                    //     const db = client.db();
+                    //     const playerCollection = db.collection('players');
+                    //     let isPresent = true;
+                    //     let insertPlayer = function (callback) {
+                    //         playerCollection.find({ player_id: json.player_id }).toArray(function (err, result) {
+                    //             if (!err) {
+                    //                 if (result.length > 0) {
+                    //                     console.log("Player with name: " + json.full_name + " already exists in the database");
+                    //                 } else {
+                    //                     isPresent = false;
+                    //                     callback(isPresent);
+                    //                 }
+                    //             }
+                    //             else {
+                    //                 console.log(err);
+                    //             }
+                    //         });
+                    //     }
 
-                        insertPlayer(function (isPresent) {
-                            MongoClient.connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-                                if (!err) {
-                                    const db = client.db();
-                                    const playerCollection = db.collection('players');
-                                    if (!isPresent) {
-                                        playerCollection.insertOne(json, function (err, result) {
-                                            if (!err) {
-                                                console.log("Inserted " + json.full_name + "'s profile into the database.");
-                                            } else {
-                                                console.log(err);
-                                            }
-                                        });
-                                    }
-                                }
-                                client.close();
-                            });
-                        });
-                    } catch (error) {
-                        console.error(error.message);
-                        process.exit(1);
-                    } finally {
-                        client.close();
-                        console.log("Scraping and Database insertion is complete!");
-                    }
+                    //     insertPlayer(function (isPresent) {
+                    //         MongoClient.connect(MONGODB_URL, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+                    //             if (!err) {
+                    //                 const db = client.db();
+                    //                 const playerCollection = db.collection('players');
+                    //                 if (!isPresent) {
+                    //                     playerCollection.insertOne(json, function (err, result) {
+                    //                         if (!err) {
+                    //                             console.log("Inserted " + json.full_name + "'s profile into the database.");
+                    //                         } else {
+                    //                             console.log(err);
+                    //                         }
+                    //                     });
+                    //                 }
+                    //             }
+                    //             client.close();
+                    //         });
+                    //     });
+                    // } catch (error) {
+                    //     console.error(error.message);
+                    //     process.exit(1);
+                    // } finally {
+                    //     client.close();
+                    //     console.log("Scraping and Database insertion is complete!");
+                    // }
                 }
             }
         }
