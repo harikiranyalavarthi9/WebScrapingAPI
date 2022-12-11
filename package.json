@@ -28,7 +28,7 @@
     "body-parser": "^1.19.0",
     "cheerio": "^1.0.0-rc.3",
     "cheerio-tableparser": "^1.0.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "fast-xml-parser": "^3.16.0",
     "he": "^1.2.0",
     "kind-of": "^6.0.3",
